@@ -1,0 +1,41 @@
+{
+  "author": "ConMaster",
+  "description": "Common packages installing and manipulating BDS",
+  "devDependencies": {
+    "@types/node": "^24.8.1",
+    "@typescript/native-preview": "7.0.0-dev.20251017.1",
+    "oxlint": "^1.24.0",
+    "rolldown": "1.0.0-beta.44",
+    "rolldown-plugin-dts": "^0.17.0",
+    "vitest": "^3.2.4"
+  },
+  "keywords": [
+    "bds",
+    "minecraft",
+    "bedrock",
+    "install"
+  ],
+  "license": "MIT",
+  "name": "@bedrock-apis/bds-setups",
+  "packageManager": "pnpm@10.18.3",
+  "scripts": {
+    "build": "rolldown -c",
+    "check": "oxlint submodules & tsgo --noEmit",
+    "test": "vitest --run"
+  },
+  "type": "module",
+  "version": "1.0.0-alpha.1",
+  "exports": {
+    "./install": {
+      "default": "./dist/install.js",
+      "types": "./dist/install.d.ts"
+    },
+    "./links": {
+      "default": "./dist/links.js",
+      "types": "./dist/links.d.ts"
+    }
+  },
+  "dependencies": {
+    "unzip-web-stream": "0.0.0-alpha.1"
+  }
+}
