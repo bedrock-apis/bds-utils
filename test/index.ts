@@ -1,23 +1,17 @@
 import { resolve } from "node:path";
-import { Installation } from "@bedrock-apis/bds-setups/install";
-import { getLatestDownloadLinkFromOSSGit } from "@bedrock-apis/bds-setups/links";
 import { platform } from "node:os";
+import { CachedInstaller } from "../dist/cached";
 
-/*const download_url = await getLatestDownloadLinkFromServices({platform: platform() as "win32", is_preview: true});
-if(!download_url)
-    throw new ReferenceError("Failed to get latest BDS link");*/
-
-const folder = resolve(import.meta.dirname, "./test-folder/");
-const installation = new Installation(folder);
-if (installation.getExecutableFile()) await installation.load();
-else
-  await installation.installFromURL(
-    (await getLatestDownloadLinkFromOSSGit({
-      platform: platform() as "win32",
-      is_preview: true,
-    }))!,
-  );
-
+const installation = await CachedInstaller.ensure({
+  installationCacheDir: resolve(import.meta.dirname, "./the-cache/"),
+  installationDirectory: resolve(import.meta.dirname, "./the-installation/"),
+  fallbackVersionOptions: {
+    is_preview: true,
+    platform: platform() as "win32",
+  }
+});
+if(!installation)
+  throw new ReferenceError("Failed to ensure installation, resources not available");
 console.log("Installed");
 
 installation.properties.set("online-mode", false);
