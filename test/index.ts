@@ -1,6 +1,6 @@
 import { resolve } from "node:path";
 import { platform } from "node:os";
-import { CachedInstaller } from "../dist/cached";
+import { CachedInstaller } from "@bedrock-apis/bds-setups/cached";
 
 const installation = await CachedInstaller.ensure({
   installationCacheDir: resolve(import.meta.dirname, "./the-cache/"),
@@ -29,5 +29,8 @@ installation.configPermissions.addAllowedModules(
   "@minecraft/server-bindings",
   "@minecraft/server-debug",
 );
-await installation.run(["Editor=False"]);
+
+await installation.runWithTestConfig(
+  {generate_api_metadata: true}, []
+);
 console.log("Started");

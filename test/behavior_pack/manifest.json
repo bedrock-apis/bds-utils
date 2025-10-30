@@ -1,0 +1,31 @@
+{
+    "format_version": 2,
+    "header": {
+        "name": "ConMaster's Pack",
+        "description": "ConMaster's Description - 2025",
+        "uuid": "8d249307-e84d-4723-afcd-b2f82cea990e",
+        "version": "1.0.0",
+        "min_engine_version": [1,21,100]
+    },
+    "modules": [
+        {
+            "type": "script",
+            "uuid": "f9b3824d-61d6-431f-b6bb-7595c685d891",
+            "entry": "scripts/index.js",
+            "version": [ 0, 1, 0 ]
+        }
+    ],
+    "capabilities": [ "script_eval" ],
+    "dependencies": [
+        {
+            // b26a4d4c-afdf-4690-88f8-931846312678
+            "module_name": "@minecraft/server",
+            "version": "2.2.0"
+        },
+        {
+            // 2bd50a27-ab5f-4f40-a596-3641627c635e
+            "module_name": "@minecraft/server-ui",
+            "version": "2.0.0"
+        }
+    ]
+}

@@ -15,8 +15,14 @@
     "bedrock",
     "install"
   ],
+  "files": [
+    "./dist/*",
+    "./LICENSE",
+    "./README.md",
+    "./package.json"
+  ],
   "license": "MIT",
-  "name": "@bedrock-apis/bds-setups",
+  "name": "@bedrock-apis/bds-utils",
   "packageManager": "pnpm@10.18.3",
   "scripts": {
     "build": "rolldown -c",
@@ -24,8 +30,12 @@
     "test": "vitest --run"
   },
   "type": "module",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "exports": {
+    "./cached": {
+      "default": "./dist/cached.js",
+      "types": "./dist/cached.d.ts"
+    },
     "./install": {
       "default": "./dist/install.js",
       "types": "./dist/install.d.ts"

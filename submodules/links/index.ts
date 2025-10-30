@@ -88,10 +88,15 @@ export interface SpecificVersionOptions extends VersionOptions {
 export function getLatestDownloadLink(options: VersionOptions): Promise<string | null>{
    return getLatestDownloadLinkFromOSSGit(options).then(_=>_??getLatestDownloadLinkFromServices(options));
 }
+export function getFileNameFromLink(link: string): string{
+   const lastIndexOf = link.lastIndexOf("/");
+   if(lastIndexOf === -1)
+      return link;
+   return link.substring(lastIndexOf + 1);
+}
 export async function getLatestFileNameVersion(options: VersionOptions): Promise<string | null>{
    const link = await getLatestDownloadLink(options);
    if(!link)
       return null;
-
-   return link.substring(link.lastIndexOf("/") + 1);
+   return getFileNameFromLink(link); 
 }

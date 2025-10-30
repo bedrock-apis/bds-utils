@@ -1,12 +1,13 @@
 import { createWriteStream, existsSync } from "node:fs";
-import { chmod, mkdir } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
+import { chmod, mkdir, rm, writeFile } from "node:fs/promises";
+import { dirname, join, resolve } from "node:path";
 import { UnzipStreamConsumer } from "unzip-web-stream";
 import { spawn } from "node:child_process";
 import { Writable } from "node:stream";
-import type { CachedInstallerOptions, TestConfigOptions } from "./interfaces";
+import type { DataPacksOptions, TestConfigOptions } from "./types";
 import { ConfigPermissions } from "./config-permissions";
 import { ServerProperties } from "./properties";
+import { TEST_CONFIG_FILE_NAME } from "./constants";
 
 export class Installation {
    /** Installation directory */
@@ -23,7 +24,9 @@ export class Installation {
          resolve(this.directory, "config/default/permissions.json"),
       );
    }
-
+   public async include(dataPacks: DataPacksOptions): Promise<void>{
+      //TODO - Implement
+   }
    // Install from zip-file source
    public async install(stream: ReadableStream<Uint8Array>): Promise<this> {
       const tasks = new Set();
@@ -74,9 +77,20 @@ export class Installation {
       return this;
    }
    public async runWithTestConfig(config: TestConfigOptions | Record<string, any>, args: string[] | null): Promise<void>{
-      await this.run(args);
+      await writeFile(join(this.directory, TEST_CONFIG_FILE_NAME), JSON.stringify(config));
+      await this.runInternal(args);
    }
    public async run(args: string[] | null): Promise<void> {
+      await rm(join(this.directory, TEST_CONFIG_FILE_NAME)).catch(_=>null);
+      return this.runInternal(args);
+   }
+   public getExecutableFile(): string | null {
+      const exePath = join(this.directory, "bedrock_server");
+      if (existsSync(exePath)) return exePath;
+      if (existsSync(exePath + ".exe")) return exePath + ".exe";
+      return null;
+   }
+   protected async runInternal(args: string[] | null): Promise<void>{
       const exe = this.getExecutableFile();
       if (!exe)
          throw new ReferenceError(
@@ -91,11 +105,5 @@ export class Installation {
       process.stdout.pipe(global.process.stdout);
       //process.stdin?.write("stop\n");
       process.on("exit", () => console.error("I can't any more, I am done!"));
-   }
-   public getExecutableFile(): string | null {
-      const exePath = resolve(this.directory, "bedrock_server");
-      if (existsSync(exePath)) return exePath;
-      if (existsSync(exePath + ".exe")) return exePath + ".exe";
-      return null;
    }
 }
