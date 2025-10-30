@@ -8,6 +8,7 @@ import type { DataPacksOptions, TestConfigOptions } from "./types";
 import { ConfigPermissions } from "./config-permissions";
 import { ServerProperties } from "./properties";
 import { TEST_CONFIG_FILE_NAME } from "./constants";
+import { BedrockDedicatedServerProcess } from "./process";
 
 export class Installation {
    /** Installation directory */
@@ -76,11 +77,11 @@ export class Installation {
       await this.configPermissions.load();
       return this;
    }
-   public async runWithTestConfig(config: TestConfigOptions | Record<string, any>, args: string[] | null): Promise<void>{
+   public async runWithTestConfig(config: TestConfigOptions | Record<string, any>, args: string[] | null): Promise<BedrockDedicatedServerProcess>{
       await writeFile(join(this.directory, TEST_CONFIG_FILE_NAME), JSON.stringify(config));
-      await this.runInternal(args);
+      return await this.runInternal(args);
    }
-   public async run(args: string[] | null): Promise<void> {
+   public async run(args: string[] | null): Promise<BedrockDedicatedServerProcess> {
       await rm(join(this.directory, TEST_CONFIG_FILE_NAME)).catch(_=>null);
       return this.runInternal(args);
    }
@@ -90,7 +91,7 @@ export class Installation {
       if (existsSync(exePath + ".exe")) return exePath + ".exe";
       return null;
    }
-   protected async runInternal(args: string[] | null): Promise<void>{
+   protected async runInternal(args: string[] | null): Promise<BedrockDedicatedServerProcess>{
       const exe = this.getExecutableFile();
       if (!exe)
          throw new ReferenceError(
@@ -102,8 +103,6 @@ export class Installation {
          cwd: this.directory,
          stdio: ["pipe"],
       });
-      process.stdout.pipe(global.process.stdout);
-      //process.stdin?.write("stop\n");
-      process.on("exit", () => console.error("I can't any more, I am done!"));
+      return BedrockDedicatedServerProcess.from(process);
    }
 }
