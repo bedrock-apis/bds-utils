@@ -11,50 +11,50 @@ suite("Latest Links Availability", () => {
    for (const current of [
       {
          method: getLatestDownloadLinkFromServices,
-         options: { is_preview: true, platform: "win32" } satisfies VersionOptions,
+         options: { preview: true, platform: "win32" } satisfies VersionOptions,
       },
       {
          method: getLatestDownloadLinkFromServices,
          options: {
-            is_preview: false,
+            preview: false,
             platform: "win32",
          } satisfies VersionOptions,
       },
       {
          method: getLatestDownloadLinkFromServices,
-         options: { is_preview: true, platform: "linux" } satisfies VersionOptions,
+         options: { preview: true, platform: "linux" } satisfies VersionOptions,
       },
       {
          method: getLatestDownloadLinkFromServices,
          options: {
-            is_preview: false,
+            preview: false,
             platform: "linux",
          } satisfies VersionOptions,
       },
       {
          method: getLatestDownloadLinkFromOSSGit,
-         options: { is_preview: true, platform: "win32" } satisfies VersionOptions,
+         options: { preview: true, platform: "win32" } satisfies VersionOptions,
       },
       {
          method: getLatestDownloadLinkFromOSSGit,
          options: {
-            is_preview: false,
+            preview: false,
             platform: "win32",
          } satisfies VersionOptions,
       },
       {
          method: getLatestDownloadLinkFromOSSGit,
-         options: { is_preview: true, platform: "linux" } satisfies VersionOptions,
+         options: { preview: true, platform: "linux" } satisfies VersionOptions,
       },
       {
          method: getLatestDownloadLinkFromOSSGit,
          options: {
-            is_preview: false,
+            preview: false,
             platform: "linux",
          } satisfies VersionOptions,
       },
    ])
-      test(`${current.method.name} IsPreview: ${current.options.is_preview} Platform: ${current.options.platform}`, async () => {
+      test(`${current.method.name} IsPreview: ${current.options.preview} Platform: ${current.options.platform}`, async () => {
          const link = await current.method(current.options);
          expect(link).not.toBe(null);
          expect(link).toBeTypeOf("string");
@@ -68,7 +68,7 @@ suite("Specific version Availability: Preview ", () => {
       {
          method: getSpecificDownloadLinkManual,
          options: {
-            is_preview: false,
+            preview: false,
             platform: "win32",
             version: STABLE_VERSION,
          } satisfies SpecificVersionOptions,
@@ -76,7 +76,7 @@ suite("Specific version Availability: Preview ", () => {
       {
          method: getSpecificDownloadLinkManual,
          options: {
-            is_preview: true,
+            preview: true,
             platform: "win32",
             version: PREVIEW_VERSION,
          } satisfies SpecificVersionOptions,
@@ -84,7 +84,7 @@ suite("Specific version Availability: Preview ", () => {
       {
          method: getSpecificDownloadLinkManual,
          options: {
-            is_preview: false,
+            preview: false,
             platform: "linux",
             version: STABLE_VERSION,
          } satisfies SpecificVersionOptions,
@@ -92,7 +92,7 @@ suite("Specific version Availability: Preview ", () => {
       {
          method: getSpecificDownloadLinkManual,
          options: {
-            is_preview: true,
+            preview: true,
             platform: "linux",
             version: PREVIEW_VERSION,
          } satisfies SpecificVersionOptions,
@@ -100,7 +100,7 @@ suite("Specific version Availability: Preview ", () => {
       {
          method: getSpecificDownloadLinkOSS,
          options: {
-            is_preview: false,
+            preview: false,
             platform: "win32",
             version: STABLE_VERSION,
          } satisfies SpecificVersionOptions,
@@ -108,7 +108,7 @@ suite("Specific version Availability: Preview ", () => {
       {
          method: getSpecificDownloadLinkOSS,
          options: {
-            is_preview: true,
+            preview: true,
             platform: "win32",
             version: PREVIEW_VERSION,
          } satisfies SpecificVersionOptions,
@@ -116,7 +116,7 @@ suite("Specific version Availability: Preview ", () => {
       {
          method: getSpecificDownloadLinkOSS,
          options: {
-            is_preview: false,
+            preview: false,
             platform: "linux",
             version: STABLE_VERSION,
          } satisfies SpecificVersionOptions,
@@ -124,13 +124,13 @@ suite("Specific version Availability: Preview ", () => {
       {
          method: getSpecificDownloadLinkOSS,
          options: {
-            is_preview: true,
+            preview: true,
             platform: "linux",
             version: PREVIEW_VERSION,
          } satisfies SpecificVersionOptions,
       },
    ])
-      test(`${current.method.name} IsPreview: ${current.options.is_preview} Platform: ${current.options.platform}`, async () => {
+      test(`${current.method.name} IsPreview: ${current.options.preview} Platform: ${current.options.platform}`, async () => {
          const link = await current.method(current.options);
          expect(link).not.toBe(null);
          expect(link).toBeTypeOf("string");

@@ -58,7 +58,7 @@ const world = await installation.worlds.create({
 
 // Run the installation
 const process = await installation.runWorld(world);
-
+ 
 // Enables output to console rendering
 process.enabledOutputRedirection();
 

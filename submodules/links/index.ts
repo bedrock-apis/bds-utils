@@ -7,7 +7,7 @@ export async function getLatestDownloadLinkFromServices(
    options: VersionOptions,
 ): Promise<string | null> {
    let DOWNLOAD_TYPE = "serverBedrock";
-   if (options.is_preview) DOWNLOAD_TYPE += "Preview";
+   if (options.preview) DOWNLOAD_TYPE += "Preview";
    switch (options.platform) {
       case "win32":
          DOWNLOAD_TYPE += "Windows";
@@ -42,10 +42,10 @@ export async function getLatestDownloadLinkFromOSSGit(
    if (!data) return null;
    const version_set = data[platform];
    if (!version_set) return null;
-   const version = version_set[options.is_preview ? "preview" : "stable"];
+   const version = version_set[options.preview ? "preview" : "stable"];
    if (!version) return null;
    response = await fetch(
-      `${OSS_GIT_VERSIONS_ROOT}/${platform}${options.is_preview ? "_preview" : ""}/${version}.json`,
+      `${OSS_GIT_VERSIONS_ROOT}/${platform}${options.preview ? "_preview" : ""}/${version}.json`,
    );
    if (!response || !response.ok) return null;
    data = await response.json().catch((_) => null);
@@ -59,14 +59,14 @@ export async function getLatestDownloadLinkFromOSSGit(
 export function getSpecificDownloadLinkManual(
    options: SpecificVersionOptions,
 ): string {
-   return `${options.cdn_root ?? CDN_DOMAIN}/bin-${options.platform === "win32" ? "win" : options.platform}${options.is_preview ?? "-preview"}/bedrock-server-${options.version}.zip`;
+   return `${options.cdn_root ?? CDN_DOMAIN}/bin-${options.platform === "win32" ? "win" : options.platform}${options.preview ?? "-preview"}/bedrock-server-${options.version}.zip`;
 }
 export async function getSpecificDownloadLinkOSS(
    options: SpecificVersionOptions,
 ): Promise<string | null> {
    const platform = options.platform === "win32" ? "windows" : options.platform;
    const response = await fetch(
-      `${OSS_GIT_VERSIONS_ROOT}/${platform}${options.is_preview ? "_preview" : ""}/${options.version}.json`,
+      `${OSS_GIT_VERSIONS_ROOT}/${platform}${options.preview ? "_preview" : ""}/${options.version}.json`,
    ).catch((_) => null);
    if (!response || !response.ok) return null;
    const data = await response.json().catch((_) => null);
@@ -75,7 +75,7 @@ export async function getSpecificDownloadLinkOSS(
 }
 export interface VersionOptions {
    platform: "win32" | "linux"; // Mojang supports only two platforms at the moment
-   is_preview: boolean;
+   preview: boolean;
 }
 export interface SpecificVersionOptions extends VersionOptions {
    version: string;
