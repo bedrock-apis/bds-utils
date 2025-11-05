@@ -2,13 +2,13 @@ import { createWriteStream, existsSync } from "node:fs";
 import { chmod, mkdir, rm, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { UnzipStreamConsumer } from "unzip-web-stream";
-import { spawn } from "node:child_process";
 import { Writable } from "node:stream";
 import type { DataPacksOptions, TestConfigOptions } from "./types";
 import { ConfigPermissions } from "./config-permissions";
 import { ServerProperties } from "./properties";
-import { TEST_CONFIG_FILE_NAME } from "./constants";
-import { BedrockDedicatedServerProcess } from "./process";
+import { CONFIG_PERMISSIONS_FILE_NAME, DEFAULT_CONFIG_DIR_PATH, SERVER_PROPERTIES_FILE_NAME, TEST_CONFIG_FILE_NAME, WORLDS_DIR_NAME } from "./constants";
+import { BedrockDedicatedServerProcess } from "../process";
+import { WorldLevel, WorldsFolderOptions } from "./world";
 
 export class Installation {
    /** Installation directory */
@@ -16,16 +16,18 @@ export class Installation {
    /** Server Properties, file referenced */
    public readonly properties: ServerProperties;
    public readonly configPermissions: ConfigPermissions;
+   public readonly worlds: WorldsFolderOptions;
    public constructor(installationDirectory: string) {
       this.directory = resolve(installationDirectory);
       this.properties = new ServerProperties(
-         resolve(this.directory, "server.properties"),
+         resolve(this.directory, SERVER_PROPERTIES_FILE_NAME),
       );
       this.configPermissions = new ConfigPermissions(
-         resolve(this.directory, "config/default/permissions.json"),
+         resolve(this.directory, DEFAULT_CONFIG_DIR_PATH, CONFIG_PERMISSIONS_FILE_NAME),
       );
+      this.worlds = new WorldsFolderOptions(resolve(this.directory, WORLDS_DIR_NAME));
    }
-   public async include(dataPacks: DataPacksOptions): Promise<void>{
+   public async include(_: DataPacksOptions): Promise<void> {
       //TODO - Implement
    }
    // Install from zip-file source
@@ -77,12 +79,12 @@ export class Installation {
       await this.configPermissions.load();
       return this;
    }
-   public async runWithTestConfig(config: TestConfigOptions | Record<string, any>, args: string[] | null): Promise<BedrockDedicatedServerProcess>{
+   public async runWithTestConfig(config: TestConfigOptions | Record<string, any>, args: string[] | null): Promise<BedrockDedicatedServerProcess> {
       await writeFile(join(this.directory, TEST_CONFIG_FILE_NAME), JSON.stringify(config));
       return await this.runInternal(args);
    }
    public async run(args: string[] | null): Promise<BedrockDedicatedServerProcess> {
-      await rm(join(this.directory, TEST_CONFIG_FILE_NAME)).catch(_=>null);
+      await rm(join(this.directory, TEST_CONFIG_FILE_NAME)).catch(_ => null);
       return this.runInternal(args);
    }
    public getExecutableFile(): string | null {
@@ -91,7 +93,7 @@ export class Installation {
       if (existsSync(exePath + ".exe")) return exePath + ".exe";
       return null;
    }
-   protected async runInternal(args: string[] | null): Promise<BedrockDedicatedServerProcess>{
+   protected async runInternal(args: string[] | null): Promise<BedrockDedicatedServerProcess> {
       const exe = this.getExecutableFile();
       if (!exe)
          throw new ReferenceError(
@@ -99,10 +101,13 @@ export class Installation {
          );
       await this.properties.save();
       await this.configPermissions.save();
-      const process = spawn(exe, args??[], {
-         cwd: this.directory,
-         stdio: ["pipe"],
-      });
-      return BedrockDedicatedServerProcess.from(process);
+      return BedrockDedicatedServerProcess.run(exe, args ?? [], this.directory);
+   }
+   /**
+    * @deprecated
+    */
+   public async runWorld(world: WorldLevel): Promise<BedrockDedicatedServerProcess> {
+      this.properties.merge(world.properties);
+      return this.run([]);
    }
 }

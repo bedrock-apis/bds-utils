@@ -30,7 +30,7 @@
     "test": "vitest --run"
   },
   "type": "module",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "exports": {
     "./cached": {
       "default": "./dist/cached.js",
@@ -43,6 +43,10 @@
     "./links": {
       "default": "./dist/links.js",
       "types": "./dist/links.d.ts"
+    },
+    "./process": {
+      "default": "./dist/process.js",
+      "types": "./dist/process.d.ts"
     }
   },
   "dependencies": {

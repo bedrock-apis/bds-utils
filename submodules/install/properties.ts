@@ -40,4 +40,9 @@ export class ServerProperties extends Map<string, number | string | boolean> {
 
         return this;
     }
+    public merge(record: Record<string, number | string | boolean>): this{
+        for(const key of Object.keys(record))
+            this.set(key, record[key]);
+        return this;
+    }
 }
