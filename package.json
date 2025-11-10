@@ -30,7 +30,7 @@
     "test": "vitest --run"
   },
   "type": "module",
-  "version": "1.0.0-alpha.4",
+  "version": "1.0.0-alpha.6",
   "exports": {
     "./cached": {
       "default": "./dist/cached.js",

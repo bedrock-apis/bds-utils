@@ -2,14 +2,13 @@ import { resolve } from "node:path";
 import { platform } from "node:os";
 import { CachedInstaller } from "@bedrock-apis/bds-setups/cached";
 import { getLatestDownloadLink } from "@bedrock-apis/bds-setups/links";
-import { Installation } from "@bedrock-apis/bds-setups/install";
 
 
 const installation = await CachedInstaller.ensure({
   installationCacheDir: resolve(import.meta.dirname, "./the-cache/"),
   installationDirectory: resolve(import.meta.dirname, "./the-installation/"),
   fallbackVersionOptions: {
-    is_preview: true,
+    preview: true,
     platform: platform() as "win32",
   }
 });
@@ -18,7 +17,7 @@ if(!installation)
 console.log("Installed");
 
 
-const downloadURL = await getLatestDownloadLink({is_preview: true, platform: "win32" /*platform() works*/ });
+const downloadURL = await getLatestDownloadLink({preview: true, platform: "win32" /*platform() works*/ });
 // Check for success, might be null
 if(!downloadURL)
   throw new ReferenceError("Installation url not available");

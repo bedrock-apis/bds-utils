@@ -36,19 +36,13 @@ export async function getLatestDownloadLinkFromOSSGit(
    options: VersionOptions,
 ): Promise<string | null> {
    let platform = options.platform === "win32" ? "windows" : options.platform;
-   let response = await fetch(OSS_GIT_VERSIONS_FILE).catch((_) => null);
-   if (!response || !response.ok) return null;
-   let data = await response.json().catch((_) => null);
-   if (!data) return null;
-   const version_set = data[platform];
-   if (!version_set) return null;
-   const version = version_set[options.preview ? "preview" : "stable"];
+   const version = await getLatestBuildVersionFromOSS(options)
    if (!version) return null;
-   response = await fetch(
+   const response = await fetch(
       `${OSS_GIT_VERSIONS_ROOT}/${platform}${options.preview ? "_preview" : ""}/${version}.json`,
    );
    if (!response || !response.ok) return null;
-   data = await response.json().catch((_) => null);
+   const data = await response.json().catch((_) => null);
    if (!data) return null;
    return data.download_url ?? null;
 }
@@ -60,6 +54,17 @@ export function getSpecificDownloadLinkManual(
    options: SpecificVersionOptions,
 ): string {
    return `${options.cdn_root ?? CDN_DOMAIN}/bin-${options.platform === "win32" ? "win" : options.platform}${options.preview ?? "-preview"}/bedrock-server-${options.version}.zip`;
+}
+export async function getLatestBuildVersionFromOSS(options: VersionOptions): Promise<string | null>{
+   let platform = options.platform === "win32" ? "windows" : options.platform;
+   let response = await fetch(OSS_GIT_VERSIONS_FILE).catch((_) => null);
+   if (!response || !response.ok) return null;
+   let data = await response.json().catch((_) => null);
+   if (!data) return null;
+   const version_set = data[platform];
+   if (!version_set) return null;
+   const version = version_set[options.preview ? "preview" : "stable"];
+   return version??null;
 }
 export async function getSpecificDownloadLinkOSS(
    options: SpecificVersionOptions,

@@ -1,5 +1,6 @@
 import { expect, suite, test } from "vitest";
 import {
+   getLatestBuildVersionFromOSS,
    getLatestDownloadLinkFromOSSGit,
    getLatestDownloadLinkFromServices,
    getSpecificDownloadLinkManual,
@@ -137,6 +138,18 @@ suite("Specific version Availability: Preview ", () => {
          expect(await isFile(link!));
       });
 });
+
+suite("Get Latest Version", ()=>{
+   for(const t of [
+      {platform: "win32", preview: true},
+      {platform: "win32", preview: false},
+      {platform: "linux", preview: true},
+      {platform: "linux", preview: false}
+   ] satisfies VersionOptions[]) 
+      test("Latest Version", async ()=>{
+         expect(await getLatestBuildVersionFromOSS(t)).not.toBeNull();
+      });
+})
 async function isFile(url: string): Promise<boolean> {
    const response = await fetch(url, { method: "HEAD" }).catch((_) => null);
    return response?.ok ?? false;

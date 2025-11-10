@@ -11,7 +11,7 @@ export class BedrockDedicatedServerProcess {
         this.process = prc;
         const { promise, resolve } = Promise.withResolvers<number | null>();
         this.promise = promise;
-        this.process.on("exit", e => {
+        this.process.on("close", e => {
             if (this._timeout_ref !== null)
                 clearTimeout(this._timeout_ref);
             this._timeout_ref = null;
