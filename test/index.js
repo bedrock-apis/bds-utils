@@ -1,7 +1,7 @@
 import { resolve } from "node:path";
 import { platform } from "node:os";
-import { CachedInstaller } from "@bedrock-apis/bds-setups/cached";
-import { getLatestDownloadLink } from "@bedrock-apis/bds-setups/links";
+import { CachedInstaller } from "@bedrock-apis/bds-utils/cached";
+import { getLatestDownloadLink } from "@bedrock-apis/bds-utils/links";
 
 
 const installation = await CachedInstaller.ensure({
@@ -9,7 +9,8 @@ const installation = await CachedInstaller.ensure({
   installationDirectory: resolve(import.meta.dirname, "./the-installation/"),
   fallbackVersionOptions: {
     preview: true,
-    platform: platform() as "win32",
+    //@ts-ignore
+    platform: platform(),
   }
 });
 if(!installation)
@@ -65,7 +66,7 @@ process.enabledOutputRedirection();
 process.runCommand("list");
 
 // Stops the server in 5s
-setTimeout(()=>process.stop(true), 60_000);
+setTimeout(()=>process.stop(true), 5_000);
 
 //Waits for process to exit, returns exit code
 const _ = await process.wait();

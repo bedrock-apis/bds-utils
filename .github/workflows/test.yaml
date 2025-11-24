@@ -27,4 +27,13 @@ jobs:
         run: pnpm install
 
       - name: Run vitest
+        run: pnpm run build
+
+      - name: Run vitest
         run: pnpm vitest run
+
+      - name: Test
+        run: |
+          cd test
+          pnpm install
+          node index.js 
