@@ -24,6 +24,7 @@ export class BedrockDedicatedServerProcess {
     public static async run(executable: string, args?: string[], cwd?: string): Promise<BedrockDedicatedServerProcess> {
         const process = spawn(executable, args ?? [], {
             cwd,
+            env: {...globalThis.process.env, LD_LIBRARY_PATH: `${globalThis.process.env.LD_LIBRARY_PATH ?? ''}:.`},
             stdio: ["pipe"],
         });
         return this.from(process);
