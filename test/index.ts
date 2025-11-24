@@ -65,14 +65,14 @@ process.enabledOutputRedirection();
 process.runCommand("list");
 
 // Stops the server in 5s
-setTimeout(()=>process.stop(true), 5_000);
+setTimeout(()=>process.stop(true), 60_000);
 
 //Waits for process to exit, returns exit code
 const _ = await process.wait();
 
 
 /*await installation.runWithTestConfig(
-  {generate_api_metadata: true}, []
+  {generate_api_metadata: true}, [] 
 );*/
 
 console.log("Started");

@@ -9,7 +9,7 @@ export async function getLatestDownloadLinkFromServices(
    let DOWNLOAD_TYPE = "serverBedrock";
    if (options.preview) DOWNLOAD_TYPE += "Preview";
    switch (options.platform) {
-      case "win32":
+      case "win32": 
          DOWNLOAD_TYPE += "Windows";
          break;
       case "linux":
