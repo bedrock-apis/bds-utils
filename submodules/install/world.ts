@@ -40,7 +40,7 @@ export class WorldsFolderOptions {
         Object.assign(ww.properties, world.options);
         // Create the dir
         if(!existsSync(folderName))
-            await mkdir(folderName);
+            await mkdir(folderName, {recursive: true});
 
         if(world.behaviorPacks)
             await writeFile(join(folderName, WORLD_BEHAVIOR_PACKS_FILE_NAME), JSON.stringify(world.behaviorPacks.map(({version, uuid})=>({version, pack_id: uuid}))));
