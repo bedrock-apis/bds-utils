@@ -1,6 +1,6 @@
-import type { SpecificVersionOptions, VersionOptions } from "../links";
+import type { SpecificVersionOptions, VersionOptions } from '../links';
 
-export type ReleaseTag = "latest" | `${number}.${number}.${number}.${number}`;
+export type ReleaseTag = 'latest' | `${number}.${number}.${number}.${number}`;
 export interface CachedInstallerOptions {
    installationDirectory: string;
    installationCacheDir: string;

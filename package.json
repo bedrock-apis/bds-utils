@@ -1,55 +1,60 @@
 {
-  "author": "ConMaster",
-  "description": "Common packages installing and manipulating BDS",
-  "devDependencies": {
-    "@types/node": "^24.8.1",
-    "@typescript/native-preview": "7.0.0-dev.20251017.1",
-    "oxlint": "^1.24.0",
-    "rolldown": "1.0.0-beta.44",
-    "rolldown-plugin-dts": "^0.17.0",
-    "vitest": "^3.2.4"
-  },
-  "keywords": [
-    "bds",
-    "minecraft",
-    "bedrock",
-    "install"
-  ],
-  "files": [
-    "./dist/*",
-    "./LICENSE",
-    "./README.md",
-    "./package.json"
-  ],
-  "license": "MIT",
-  "name": "@bedrock-apis/bds-utils",
-  "packageManager": "pnpm@10.18.3",
-  "scripts": {
-    "build": "rolldown -c",
-    "check": "oxlint submodules & tsgo --noEmit",
-    "test": "vitest --run"
-  },
-  "type": "module",
-  "version": "1.0.0-alpha.6",
-  "exports": {
-    "./cached": {
-      "default": "./dist/cached.js",
-      "types": "./dist/cached.d.ts"
-    },
-    "./install": {
-      "default": "./dist/install.js",
-      "types": "./dist/install.d.ts"
-    },
-    "./links": {
-      "default": "./dist/links.js",
-      "types": "./dist/links.d.ts"
-    },
-    "./process": {
-      "default": "./dist/process.js",
-      "types": "./dist/process.d.ts"
-    }
-  },
-  "dependencies": {
-    "unzip-web-stream": "0.0.0-alpha.1"
-  }
+   "name": "@bedrock-apis/bds-utils",
+   "version": "1.1.0-beta.1",
+   "description": "Common packages installing and manipulating BDS",
+   "keywords": [
+      "bds",
+      "bedrock",
+      "install",
+      "minecraft"
+   ],
+   "license": "MIT",
+   "author": "ConMaster",
+   "files": [
+      "./LICENSE",
+      "./package.json",
+      "./README.md",
+      "./dist/*"
+   ],
+   "type": "module",
+   "exports": {
+      "./cached": {
+         "types": "./dist/cached.d.ts",
+         "default": "./dist/cached.js"
+      },
+      "./install": {
+         "types": "./dist/install.d.ts",
+         "default": "./dist/install.js"
+      },
+      "./links": {
+         "types": "./dist/links.d.ts",
+         "default": "./dist/links.js"
+      },
+      "./process": {
+         "types": "./dist/process.d.ts",
+         "default": "./dist/process.js"
+      },
+      ".": {
+         "types": "./dist/main.d.ts",
+         "default": "./dist/main.js"
+      }
+   },
+   "scripts": {
+      "build": "rolldown -c",
+      "check": "oxlint submodules & tsgo --noEmit",
+      "test": "vitest --run"
+   },
+   "dependencies": {
+      "unzip-web-stream": "0.0.0-alpha.1"
+   },
+   "devDependencies": {
+      "@types/node": "^24.8.1",
+      "@typescript/native-preview": "7.0.0-dev.20251017.1",
+      "oxfmt": "^0.23.0",
+      "oxlint": "^1.38.0",
+      "rolldown": "1.0.0-rc.3",
+      "rolldown-plugin-dts": "^0.22.1",
+      "vitest": "^3.2.4"
+   },
+   "packageManager": "pnpm@10.27.0"
 }
