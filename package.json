@@ -10,6 +10,15 @@
    ],
    "license": "MIT",
    "author": "ConMaster",
+   "types": "./dist/main.d.ts",
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/bedrock-apis/bds-utils.git"
+   },
+   "bugs": {
+      "url": "https://github.com/bedrock-apis/bds-utils/issues"
+   },
+   "homepage": "https://github.com/bedrock-apis/bds-utils#readme",
    "files": [
       "./LICENSE",
       "./package.json",
@@ -17,25 +26,32 @@
       "./dist/*"
    ],
    "type": "module",
+   "main": "./dist/main.js",
+   "typings": "./dist/main.d.ts",
    "exports": {
       "./cached": {
          "types": "./dist/cached.d.ts",
+         "import": "./dist/cached.js",
          "default": "./dist/cached.js"
       },
       "./install": {
          "types": "./dist/install.d.ts",
+         "import": "./dist/install.js",
          "default": "./dist/install.js"
       },
       "./links": {
          "types": "./dist/links.d.ts",
+         "import": "./dist/links.js",
          "default": "./dist/links.js"
       },
       "./process": {
          "types": "./dist/process.d.ts",
+         "import": "./dist/process.js",
          "default": "./dist/process.js"
       },
       ".": {
          "types": "./dist/main.d.ts",
+         "import": "./dist/main.js",
          "default": "./dist/main.js"
       }
    },
