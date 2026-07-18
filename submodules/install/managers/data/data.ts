@@ -1,15 +1,15 @@
 import { existsSync } from 'node:fs';
-import { glob, readFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { glob, readFile, rm } from 'node:fs/promises';
+import { basename, join } from 'node:path';
 
 import {
    TaskConcurrencyChannel,
    FileDatabaseStructure,
    DirectoryDatabaseStructure,
-   DataSource,
+   type DataSource,
 } from '../../../utils';
 import { BaseInstallationManager } from '../base';
-import { Manifest, ManifestLike, PackageType } from './manifest';
+import { Manifest, type ManifestLike, type PackageType } from './manifest';
 
 export interface ResourceInfo {
    uuid: string;
@@ -74,7 +74,7 @@ export class DataManager extends BaseInstallationManager {
          });
          if (existsSync(folder)) {
             console.warn(
-               'This pack is already installed, please change version and remove it from dependencies.'
+               `warn: Pack ${basename(folder)}(${manifest.header.name}) is already installed, please change version or remove it from current installation.`
             );
             continue;
          }
@@ -88,11 +88,21 @@ export class DataManager extends BaseInstallationManager {
       return results;
    }
 
+   public async clear(): Promise<void> {
+      await Promise.all(
+         ['development_behavior_packs', 'development_resource_packs'].map(_ =>
+            rm(_, { recursive: true }).catch(_ => null)
+         )
+      );
+      this.sources.clear();
+      await this.load();
+   }
+
    /**
     * Checks if a package with the given UUID is already installed.
     * @param uuid The package UUID.
     */
-   public hasCommonResource(uuid: string): boolean {
+   public has(uuid: string): boolean {
       return this.sources.has(uuid);
    }
 
@@ -131,6 +141,7 @@ export class DataManager extends BaseInstallationManager {
                   // oxlint-disable-next-line no-await-in-loop
                   packages.push({ data: await database.substructure(path), manifest: m, type: kind });
                } catch {
+                  console.error(new ReferenceError());
                   /* ignore invalid json */
                }
             }

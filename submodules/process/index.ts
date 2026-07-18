@@ -1,8 +1,10 @@
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
 import { stderr, stdout } from 'node:process';
 
+import { GRACE_PERIOD_DELAY } from '../install/constants';
+
 export class BedrockDedicatedServerProcess {
-   public stopTimeout = 3_000; // 3s
+   public stopTimeout = GRACE_PERIOD_DELAY;
    public readonly process: ChildProcessWithoutNullStreams;
    protected readonly promise: Promise<number | null>;
    protected _timeout_ref: ReturnType<typeof setTimeout> | null = null;

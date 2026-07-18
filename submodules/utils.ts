@@ -1,8 +1,9 @@
 import { createReadStream } from 'node:fs';
 import { mkdir, readdir, readFile, rm, writeFile, stat } from 'node:fs/promises';
-import { dirname } from 'node:path';
+import { dirname, relative, resolve } from 'node:path';
 import { Readable } from 'node:stream';
 import { fileURLToPath } from 'node:url';
+
 import { UnzipStreamConsumer } from 'unzip-web-stream';
 
 export type DataSource = string | URL | Request | Response | ReadableStream<Uint8Array> | Uint8Array;
@@ -119,7 +120,7 @@ export abstract class FileDatabaseStructure {
             // file URL
             const st = await stat(path).catch(_ => null);
             if (!st) throw new Error(`Failed to get stats for path: ${path}`);
-            if (st.isDirectory()) database = new DirectoryDatabaseStructure(fileURLToPath(path));
+            if (st.isDirectory()) database = new DirectoryDatabaseStructure(path);
             else stream = await Utils.fromFilePathToStream(path);
          }
       } else if (source instanceof URL) {
@@ -168,8 +169,7 @@ export class MemoryDatabaseStructure extends FileDatabaseStructure {
       const tasks = new Set();
       await readable.pipeTo(
          new UnzipStreamConsumer({
-            // oxlint-disable-next-line explicit-function-return-type
-            onFile: (report, readable) => {
+            onFile: (report, readable): void => {
                const task = new Response(readable).bytes().then(_ => {
                   inmzs.set(report.path, _);
                   tasks.delete(task);
@@ -195,6 +195,7 @@ export class MemoryDatabaseStructure extends FileDatabaseStructure {
 export class DirectoryDatabaseStructure extends FileDatabaseStructure {
    public readonly directory: string;
    public constructor(directory: string) {
+      directory = relative('.', resolve(directory));
       if (directory.endsWith('/')) directory = directory.substring(0, directory.length - 1);
       super();
       this.directory = directory;
@@ -215,7 +216,11 @@ export class DirectoryDatabaseStructure extends FileDatabaseStructure {
    }
    public async keys(): Promise<string[]> {
       return await readdir(this.directory, { recursive: true, withFileTypes: true })
-         .then(e => e.filter(_ => _.isFile()).map(e => this.correction(e.parentPath + e.name)))
+         .then(e =>
+            e
+               .filter(_ => _.isFile())
+               .map(e => this.correction(e.parentPath.substring(this.directory.length) + '/' + e.name))
+         )
          .catch(_ => []);
    }
    public async substructure(path: string): Promise<DirectoryDatabaseStructure> {

@@ -3,6 +3,7 @@ import { chmod, mkdir, rm, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { platform } from 'node:process';
 import { Writable } from 'node:stream';
+
 import { UnzipStreamConsumer } from 'unzip-web-stream';
 
 import {
@@ -12,7 +13,7 @@ import {
    type VersionOptions,
 } from '../links';
 import { BedrockDedicatedServerProcess } from '../process';
-import { DataSource, EventEmitter, Utils } from '../utils';
+import { type DataSource, EventEmitter, Utils } from '../utils';
 import { GRACE_PERIOD_DELAY, TEST_CONFIG_FILE_NAME } from './constants';
 import { BaseInstallationManager } from './managers/base';
 import { ConfigPermissionsManager } from './managers/config-permissions';
@@ -51,11 +52,16 @@ export class Installation implements AsyncDisposable {
       processExit: { process: BedrockDedicatedServerProcess };
    }> = new EventEmitter();
 
+   public static async From(options: InstallationOptions): Promise<Installation> {
+      const inst = new this(options);
+      if (inst.getExecutableFile()) await inst.load();
+      return inst;
+   }
    /**
     * Creates a new Installation instance
     * @param options - Installation configuration options
     */
-   public constructor(options: InstallationOptions) {
+   protected constructor(options: InstallationOptions) {
       this.options = {
          directory: options.directory,
          disposableMode: options.disposableMode ?? DisposableMode.StopRunningServes,

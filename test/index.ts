@@ -1,7 +1,8 @@
-import { DisposableMode, Installation } from '@bedrock-apis/bds-utils/install';
-import { getLatestDownloadLink } from '@bedrock-apis/bds-utils/links';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import { DisposableMode, Installation } from '@bedrock-apis/bds-utils/install';
+import { getLatestDownloadLink } from '@bedrock-apis/bds-utils/links';
 
 await using installation = new Installation({
    directory: resolve(dirname(fileURLToPath(import.meta.url)), './the-installation'),

@@ -213,7 +213,4 @@ export type PropertiesMap = {
    'transport-layer-type': ('raknet' | 'nethernet-websocket') | (string & {});
    'trusted-key': string;
    'use-json-rpc': boolean;
-   'view-distance': number;
-   'wserver-retry-time': number;
-   'wsserver-encryption': boolean;
 };

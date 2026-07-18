@@ -1,6 +1,6 @@
 {
    "name": "@bedrock-apis/bds-utils",
-   "version": "1.1.0-beta.1",
+   "version": "1.2.0-beta.1",
    "description": "Common packages installing and manipulating BDS",
    "keywords": [
       "bds",
@@ -8,17 +8,16 @@
       "install",
       "minecraft"
    ],
+   "homepage": "https://github.com/bedrock-apis/bds-utils#readme",
+   "bugs": {
+      "url": "https://github.com/bedrock-apis/bds-utils/issues"
+   },
    "license": "MIT",
    "author": "ConMaster",
-   "types": "./dist/main.d.ts",
    "repository": {
       "type": "git",
       "url": "git+https://github.com/bedrock-apis/bds-utils.git"
    },
-   "bugs": {
-      "url": "https://github.com/bedrock-apis/bds-utils/issues"
-   },
-   "homepage": "https://github.com/bedrock-apis/bds-utils#readme",
    "files": [
       "./LICENSE",
       "./package.json",
@@ -27,37 +26,33 @@
    ],
    "type": "module",
    "main": "./dist/main.js",
+   "types": "./dist/main.d.ts",
    "typings": "./dist/main.d.ts",
    "exports": {
       "./cached": {
-         "types": "./dist/cached.d.ts",
-         "import": "./dist/cached.js",
-         "default": "./dist/cached.js"
+         "default": "./dist/cached.js",
+         "types": "./dist/cached.d.ts"
       },
       "./install": {
-         "types": "./dist/install.d.ts",
-         "import": "./dist/install.js",
-         "default": "./dist/install.js"
+         "default": "./dist/install.js",
+         "types": "./dist/install.d.ts"
       },
       "./links": {
-         "types": "./dist/links.d.ts",
-         "import": "./dist/links.js",
-         "default": "./dist/links.js"
+         "default": "./dist/links.js",
+         "types": "./dist/links.d.ts"
       },
       "./process": {
-         "types": "./dist/process.d.ts",
-         "import": "./dist/process.js",
-         "default": "./dist/process.js"
+         "default": "./dist/process.js",
+         "types": "./dist/process.d.ts"
       },
       ".": {
-         "types": "./dist/main.d.ts",
-         "import": "./dist/main.js",
-         "default": "./dist/main.js"
+         "default": "./dist/main.js",
+         "types": "./dist/main.d.ts"
       }
    },
    "scripts": {
       "build": "rolldown -c",
-      "check": "oxlint submodules & tsgo --noEmit",
+      "check": "oxlint submodules & tsc --noEmit & oxfmt",
       "test": "vitest --run"
    },
    "dependencies": {
@@ -65,11 +60,11 @@
    },
    "devDependencies": {
       "@types/node": "^24.8.1",
-      "@typescript/native-preview": "7.0.0-dev.20251017.1",
-      "oxfmt": "^0.23.0",
-      "oxlint": "^1.38.0",
-      "rolldown": "1.0.0-rc.3",
-      "rolldown-plugin-dts": "^0.22.1",
+      "oxfmt": "^0.59.0",
+      "oxlint": "^1.74.0",
+      "rolldown": "^1.2.0",
+      "rolldown-plugin-dts": "^0.27.11",
+      "typescript": "^7.0.2",
       "vitest": "^3.2.4"
    },
    "packageManager": "pnpm@10.27.0"

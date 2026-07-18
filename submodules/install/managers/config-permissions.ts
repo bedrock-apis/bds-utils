@@ -47,17 +47,9 @@ export class ConfigPermissionsManager extends BaseInstallationManager {
     * Adds one or more modules to the allow list.
     * @param moduleNames Names of modules to allow (e.g., '@minecraft/server-net').
     */
-   public allowModule(...moduleNames: RecommendedModuleName[]): this {
+   public setAllowed(moduleNames: RecommendedModuleName[]): this {
+      this.allowedModules.clear();
       for (const moduleName of moduleNames) this.allowedModules.add(moduleName.toLowerCase());
-      return this;
-   }
-
-   /**
-    * Removes one or more modules from the allow list.
-    * @param moduleNames Names of modules to deny.
-    */
-   public denyModule(...moduleNames: RecommendedModuleName[]): this {
-      for (const moduleName of moduleNames) this.allowedModules.delete(moduleName.toLowerCase());
       return this;
    }
 
@@ -65,21 +57,22 @@ export class ConfigPermissionsManager extends BaseInstallationManager {
     * Checks if a module is currently allowed.
     * @param moduleName The module name to check.
     */
-   public isAllowedModule(moduleName: RecommendedModuleName): boolean {
+   public isAllowed(moduleName: RecommendedModuleName): boolean {
       return this.allowedModules.has(moduleName.toLowerCase());
    }
 
    /**
     * Retrieves all currently allowed modules.
     */
-   public getAllowedModules(): string[] {
-      return Array.from(this.allowedModules);
+   public getAllowed(): RecommendedModuleName[] {
+      return Array.from(this.allowedModules) as RecommendedModuleName[];
    }
 
    /**
     * Configures specific options for a module (e.g., networking limits).
     * @param moduleName The module to configure.
     * @param configuration The configuration object or null to remove it.
+    * @deprecated This function is still experimental and might be out of date
     */
    public setConfiguration<T extends keyof ConfigurationOptions>(
       moduleName: T,
@@ -93,6 +86,7 @@ export class ConfigPermissionsManager extends BaseInstallationManager {
     * Retrieves the current configuration for a specific module.
     * @param moduleName The module name.
     * @returns A clone of the configuration object or null.
+    * @deprecated This function is still experimental and might be out of date
     */
    public getConfiguration<T extends keyof ConfigurationOptions>(
       moduleName: T
@@ -119,6 +113,7 @@ export type RecommendedModuleName =
    | '@minecraft/server-debug'
    | (`@minecraft/${string}` & {});
 
+/** @deprecated This type is still experimental and might be out of date*/
 export type ConfigurationOptions = {
    '@minecraft/server-net':
       | {

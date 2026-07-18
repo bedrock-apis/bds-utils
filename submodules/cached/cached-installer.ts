@@ -3,15 +3,14 @@ import { mkdir, readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { Readable, Writable } from 'node:stream';
 
-import type { CachedInstallerOptions } from './types';
-
 import { Installation } from '../install';
 import {
    getFileNameFromLink,
    getLatestDownloadLink,
    getSpecificDownloadLinkOSS,
-   SpecificVersionOptions,
+   type SpecificVersionOptions,
 } from '../links';
+import type { CachedInstallerOptions } from './types';
 
 export class CachedInstaller {
    private constructor() {}
@@ -38,8 +37,7 @@ export class CachedInstaller {
             throw new ReferenceError('Failed to create installation dir');
       }
 
-      const installation = new Installation({ directory: installDir });
-      if (installation.getExecutableFile()) return await installation.load();
+      const installation = await Installation.From({ directory: installDir });
 
       const dOptions = options.fallbackVersionOptions;
       let link = await (dOptions.version

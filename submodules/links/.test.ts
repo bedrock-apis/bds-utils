@@ -139,6 +139,7 @@ suite('Get Latest Version', () => {
          expect(await getLatestBuildVersionFromOSS(t)).not.toBeNull();
       });
 });
+
 async function isFile(url: string): Promise<boolean> {
    const response = await fetch(url, { method: 'HEAD' }).catch(_ => null);
    return response?.ok ?? false;

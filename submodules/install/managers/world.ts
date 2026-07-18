@@ -8,7 +8,7 @@ import {
    WORLDS_DIR_NAME,
 } from '../constants';
 import { BaseInstallationManager } from './base';
-import { ResourceInfo } from './data';
+import { type ResourceInfo } from './data';
 
 const LEVELNAME_FILE = 'levelname.txt';
 
@@ -19,6 +19,13 @@ export interface WorldInfo {
 }
 export class WorldsManager extends BaseInstallationManager {
    protected readonly worldsByLevelName: Map<string, WorldInfo> = new Map();
+   public async clear(): Promise<boolean> {
+      this.worldsByLevelName.clear();
+      return rm(join(this.installation.directory, WORLDS_DIR_NAME), { force: true, recursive: true }).then(
+         _ => true,
+         _ => false
+      );
+   }
 
    /**
     * Scans the worlds directory and loads all existing worlds into memory.
@@ -29,7 +36,7 @@ export class WorldsManager extends BaseInstallationManager {
       for (const levelName of await readdir(worldsFolder, { withFileTypes: true })) {
          if (!levelName.isDirectory()) continue;
          // oxlint-disable-next-line no-await-in-loop
-         await this.addLevel(levelName.name);
+         await this.add(levelName.name);
       }
    }
 
@@ -43,14 +50,14 @@ export class WorldsManager extends BaseInstallationManager {
     * @param name The level name to look up.
     * @returns WorldInfo if found, or null if the world doesn't exist.
     */
-   public async getByLevelName(name: string): Promise<WorldInfo | null> {
+   public async get(name: string): Promise<WorldInfo | null> {
       const worldPath = join(this.installation.directory, WORLDS_DIR_NAME, name);
       if (!existsSync(worldPath)) return null;
 
       let levelInfo = this.worldsByLevelName.get(name);
       if (levelInfo) return levelInfo;
 
-      return this.addLevel(name);
+      return this.add(name);
    }
 
    /**
@@ -65,14 +72,9 @@ export class WorldsManager extends BaseInstallationManager {
       await mkdir(worldPath, { recursive: true });
       await writeFile(join(worldPath, LEVELNAME_FILE), name);
       if (options) {
-         await writeFile(
-            join(worldPath, 'level.dat'),
-            CreateLevelDat(['experiments_ever_used', ...new Set(['gametest', ...options.experiments])])
-         );
-         await writeFile(
-            join(worldPath, 'level2.dat'),
-            CreateLevelDat(['experiments_ever_used', ...new Set(['gametest', ...options.experiments])])
-         );
+         const experiments = new Set(options.experiments);
+         if (experiments.size) experiments.add('experiments_ever_used');
+         await writeFile(join(worldPath, 'level.dat'), internalLevelCreator([...experiments]));
          await writeFile(
             join(worldPath, WORLD_BEHAVIOR_PACKS_FILE_NAME),
             JSON.stringify(
@@ -106,11 +108,11 @@ export class WorldsManager extends BaseInstallationManager {
     * Updates server properties to make the specified world active on next boot.
     * @param worldInfo Information about the world to set as active.
     */
-   public setWorldActiveInProperties(worldInfo: WorldInfo): void {
+   public setActive(worldInfo: WorldInfo): void {
       this.installation.properties.set('level-name', worldInfo.levelName);
    }
 
-   protected async addLevel(name: string): Promise<WorldInfo> {
+   protected async add(name: string): Promise<WorldInfo> {
       const worldsFolder = join(this.installation.directory, WORLDS_DIR_NAME);
       const path = join(worldsFolder, name);
       const it = {
@@ -138,7 +140,7 @@ export interface CreateWorldOptions {
 }
 
 // Sometimes the ugly code does the job batter than anything else, so please leave it as is, do we really need NBT bloat to deal with this simple file?
-export function CreateLevelDat(experiments: string[]): Uint8Array {
+export function internalLevelCreator(experiments: string[]): Uint8Array {
    const writeString = (info: Uint8Array): void => {
       view.setUint16(offset, info.length, true);
       offset += 2;

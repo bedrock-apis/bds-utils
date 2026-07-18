@@ -68,7 +68,7 @@ export async function getSpecificDownloadLinkOSS(options: SpecificVersionOptions
    return data.download_url ?? null;
 }
 export interface VersionOptions {
-   platform: 'win32' | 'linux'; // Mojang supports only two platforms at the moment
+   platform: 'win32' | 'linux' | (string & {}); // Mojang supports only two platforms at the moment
    preview: boolean;
 }
 export interface SpecificVersionOptions extends VersionOptions {

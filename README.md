@@ -1,8 +1,10 @@
 # BDS Utils
 
 ### Changelog
+
 #### 1.1.0-beta.2
- - Fixed package.json and add repository field
+
+- Fixed package.json and add repository field
 
 ## Server Properties
 
