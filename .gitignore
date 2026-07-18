@@ -4,4 +4,7 @@ dist
 bds-docs-main
 the-installation
 the-cache
+
 .temp
+
+test/*/**/*

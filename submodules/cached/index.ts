@@ -1,2 +1,2 @@
-export * from "./cached-installer";
-export type *  from "./types";
+export * from './cached-installer';
+export type * from './types';

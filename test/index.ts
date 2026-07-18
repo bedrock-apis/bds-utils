@@ -1,78 +1,33 @@
-import { resolve } from "node:path";
-import { platform } from "node:os";
-import { CachedInstaller } from "@bedrock-apis/bds-setups/cached";
-import { getLatestDownloadLink } from "@bedrock-apis/bds-setups/links";
+import { existsSync } from 'node:fs';
+import { mkdir } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { platform } from 'node:process';
 
+import { Installation, getLatestDownloadLink } from '@bedrock-apis/bds-utils';
 
-const installation = await CachedInstaller.ensure({
-  installationCacheDir: resolve(import.meta.dirname, "./the-cache/"),
-  installationDirectory: resolve(import.meta.dirname, "./the-installation/"),
-  fallbackVersionOptions: {
-    preview: true,
-    platform: platform() as "win32",
-  }
+const temp = '.temp';
+if (!existsSync(temp)) await mkdir(temp);
+
+const link = await getLatestDownloadLink({ platform: platform as 'win32', preview: true });
+if (!link) throw new ReferenceError('Failed to obtain download link for latest BDS');
+
+const name = link.substring(link.lastIndexOf('/') + 1);
+const installation_path = resolve(temp, name);
+if (!existsSync(installation_path)) await mkdir(installation_path);
+
+await using installation = await Installation.From({ directory: installation_path });
+if (!installation.getExecutableFile()) await installation.install(link);
+
+const rsc = await installation.data.import('behavior_pack');
+
+installation.config.setAllowed(['@minecraft/server']);
+await installation.worlds.clear();
+const world = await installation.worlds.create('level_data', {
+   behavior_packs: rsc,
+   experiments: ['gametest'],
+   resource_packs: [],
 });
-if(!installation)
-  throw new ReferenceError("Failed to ensure installation, resources not available");
-console.log("Installed");
 
-
-const downloadURL = await getLatestDownloadLink({preview: true, platform: "win32" /*platform() works*/ });
-// Check for success, might be null
-if(!downloadURL)
-  throw new ReferenceError("Installation url not available");
-
-/*
-const installation = new Installation("./here/");
-await installation.installFromURL(downloadURL);
-*/
-// Set server.properties
-installation.properties.set("online-mode", false);
-installation.properties.set("content-log-console-output-enabled", true);
-installation.properties.set("isHardcore", true);
-installation.properties.set("enable-script", true);
-
-
-installation.configPermissions.addAllowedModules(
-  "@minecraft/server",
-  "@minecraft/server-ui",
-  "@minecraft/server-net",
-  "@minecraft/server-admin",
-  "@minecraft/server-editor",
-  "@minecraft/server-editor-bindings",
-  "@minecraft/server-editor-private-bindings",
-  "@minecraft/server-bindings",
-  "@minecraft/server-debug",
-);
-const world = await installation.worlds.create({
-  options: {
-    "level-name": "Hello World",
-    difficulty: "easy"
-  },
-  behaviorPacks: [
-    {uuid: "8d249307-e84d-4723-afcd-b2f82cea990e", version: "1.0.0"},
-  ]
-})
-
-
-// Run the installation
-const process = await installation.runWorld(world);
- 
-// Enables output to console rendering
-process.enabledOutputRedirection();
-
-// Run commands
-process.runCommand("list");
-
-// Stops the server in 5s
-setTimeout(()=>process.stop(true), 5_000);
-
-//Waits for process to exit, returns exit code
-const _ = await process.wait();
-
-
-/*await installation.runWithTestConfig(
-  {generate_api_metadata: true}, []
-);*/
-
-console.log("Started");
+installation.properties.set('level-name', world.levelName);
+const process = await installation.run([]);
+setTimeout(() => process.stop(false), 3000);
