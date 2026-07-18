@@ -1,74 +1,43 @@
-# BDS Utils
+# bds-utils
+
+[![npm version](https://badge.fury.io/js/@bedrock-apis%2Fbds-utils.svg)](https://www.npmjs.com/package/@bedrock-apis/bds-utils)
 
 ### Changelog
 
-#### 1.1.0-beta.2
+- Shared moduling with great treeshaking support and as lightweight as possible
+- Using only nodeJS build-ins
 
-- Fixed package.json and add repository field
+### Supports
+- Latest version resolution
+- Installing BDS from link or zip file directly
+- Installing resource/behavior packs
+- Creating world with given resource/behavior packs
+- Well typed server.properties APIs
+- Running commands from console via process.runCommand
 
-## Server Properties
+NPM: https://www.npmjs.com/package/@bedrock-apis/bds-utils
 
-The `ServerPropertiesManager` handles the `server.properties` file. It parses the file into memory and allows programmatic updates.
+## Usage
+```ts
+import { Installation, getLatestDownloadLink } from '@bedrock-apis/bds-utils';
+import { platform } from 'node:process';
 
-```typescript
-// Set server properties
-installation.properties.set('online-mode', false);
-installation.properties.set('content-log-console-output-enabled', true);
-installation.properties.set('isHardcore', true);
-installation.properties.set('enable-script', true);
+const link = await getLatestDownloadLink({ platform: platform, preview: true });
+if (!link) throw new ReferenceError('Failed to obtain download link for latest BDS');
 
-// Get a property value
-const levelName = installation.properties.get('level-name');
-
-// Delete a property
-installation.properties.delete('level-name');
-```
-
-## Config Permissions
-
-The `ConfigPermissionsManager` manages `permissions.json` located in the `config` directory. This is primarily used to allow or deny script modules and configure their settings.
-
-```typescript
-// Allow specific script modules
-installation.config.allowModule('@minecraft/server-net');
-
-// Set module-specific configuration
-installation.config.setConfiguration('@minecraft/server-net', {
-   allowed_uris: ['https://example.com'],
-   force_https: true,
-   max_body_bytes: 1048576,
-   max_concurrent_requests: 10,
-   session_headers: {},
-});
-```
-
-## Data Management
-
-The `DataManager` handles behavior packs and resource packs. It supports importing addons from various sources including URLs, file paths, and streams.
-
-```typescript
-// Import an addon from a local file URL
-await installation.data.import(new URL('./sky-gen-addon.mcpack', import.meta.url));
-```
-
-## World Management
-
-The `WorldsManager` provides tools to manage server worlds located in the `worlds` directory. It can track existing worlds, create new ones, and remove them.
-
-```typescript
-// Get world information by level name
-const worldInfo = await installation.worlds.getByLevelName('MyWorld');
-
-if (worldInfo) {
-   // Set this world as the active level in server.properties
-   installation.worlds.setWorldActiveInProperties(worldInfo);
-
-   // Delete the world and all its files
-   await installation.worlds.delete(worldInfo);
+await using installation = await Installation.From({ directory: 'my-installation' });
+if (!installation.getExecutableFile()) {
+   const link = await getLatestDownloadLink({ platform: platform, preview: true });
+   if (!link) throw new ReferenceError('Failed to obtain download link for latest BDS');
+   await installation.install(link);
 }
 
-// Create a new world and run it in BDS
-const newWorld = await installation.worlds.create('NewAdventure');
-installation.worlds.setWorldActiveInProperties(newWorld);
+// Start process with no arguments
 const process = await installation.run([]);
+
+// enable stdoutput redirection
+process.enabledOutputRedirection();
+
+// gracefully stop the server -> send "stop" command
+await process.stop();
 ```
