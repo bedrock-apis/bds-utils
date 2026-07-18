@@ -2,7 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/@bedrock-apis%2Fbds-utils.svg)](https://www.npmjs.com/package/@bedrock-apis/bds-utils)
 
-Set of packages for helping extracting BDS with many options
+### Changelog
 
 - Shared moduling with great treeshaking support and as lightweight as possible
 - Using only nodeJS build-ins

@@ -1,12 +1,13 @@
-lockfileVersion: "9.0"
+lockfileVersion: '9.0'
 
 settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
 importers:
+
   .:
     dependencies:
-      "@bedrock-apis/bds-setups":
+      '@bedrock-apis/bds-utils':
         specifier: link:..
         version: link:..
