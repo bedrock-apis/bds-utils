@@ -17,7 +17,7 @@ if (!existsSync(installation_path)) await mkdir(installation_path);
 
 await using installation = await Installation.From({ directory: installation_path });
 if (!installation.getExecutableFile()) await installation.install(link);
-
+/*
 const rsc = await installation.data.import('behavior_pack');
 
 installation.config.setAllowed(['@minecraft/server']);
@@ -31,3 +31,4 @@ const world = await installation.worlds.create('level_data', {
 installation.properties.set('level-name', world.levelName);
 const process = await installation.run([]);
 setTimeout(() => process.stop(false), 3000);
+*/

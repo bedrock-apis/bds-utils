@@ -1,3 +1,7 @@
+# 1.3.0-beta
+
+- Added `getLatestDownloadLinkFromServices` alternative to already available `getLatestBuildVersionFromOSS`
+
 # 1.2.0-beta
 
 - Fixed issue with loading data packs of from physical directory

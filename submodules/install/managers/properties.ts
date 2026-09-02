@@ -1,3 +1,4 @@
+import type { BlobOptions } from 'node:buffer';
 import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
@@ -213,4 +214,8 @@ export type PropertiesMap = {
    'transport-layer-type': ('raknet' | 'nethernet-websocket') | (string & {});
    'trusted-key': string;
    'use-json-rpc': boolean;
+   transport: ('raknet' | 'nethernet-websocket') | (string & {});
+   'convert-world-to-editor-project': boolean;
+   'server-udp-ports': string;
+   'server-ip': string;
 };

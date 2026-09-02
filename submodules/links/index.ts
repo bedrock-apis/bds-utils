@@ -5,26 +5,36 @@ export const OSS_GIT_VERSIONS_ROOT: string =
 export const OSS_GIT_VERSIONS_FILE: string = `${OSS_GIT_VERSIONS_ROOT}/versions.json`;
 export const CDN_DOMAIN: string = 'https://www.minecraft.net/bedrockdedicatedserver';
 
-export async function getLatestDownloadLinkFromServices(options: VersionOptions): Promise<string | null> {
-   let DOWNLOAD_TYPE = 'serverBedrock';
-   if (options.preview) DOWNLOAD_TYPE += 'Preview';
-   switch (options.platform) {
+function serviceMapInternal(
+   preview: VersionOptions['preview'],
+   platform: VersionOptions['platform']
+): string | null {
+   let download_type = 'serverBedrock';
+   if (preview) download_type += 'Preview';
+   switch (platform) {
       case 'win32':
-         DOWNLOAD_TYPE += 'Windows';
+         download_type += 'Windows';
          break;
       case 'linux':
-         DOWNLOAD_TYPE += 'Linux';
+         download_type += 'Linux';
          break;
       default:
          return null;
    }
+
+   return download_type;
+}
+
+export async function getLatestDownloadLinkFromServices(options: VersionOptions): Promise<string | null> {
+   let download_type = serviceMapInternal(options.preview, options.platform);
+   if (!download_type) return null;
    const response = await fetch(SERVICES_LATEST_DOWNLOAD_LINK).catch(_ => null);
    if (!response || !response.ok) return null;
    const DATA = await response.json().catch(_ => null);
    if (!DATA) return null;
    if (!DATA.result) return null;
    if (!Array.isArray(DATA.result.links)) return null;
-   return DATA.result.links.find((e: any) => e?.downloadType === DOWNLOAD_TYPE)?.downloadUrl ?? null;
+   return DATA.result.links.find((e: any) => e?.downloadType === download_type)?.downloadUrl ?? null;
 }
 
 export async function getLatestDownloadLinkFromOSSGit(options: VersionOptions): Promise<string | null> {
@@ -46,6 +56,7 @@ export async function getLatestDownloadLinkFromOSSGit(options: VersionOptions): 
 export function getSpecificDownloadLinkManual(options: SpecificVersionOptions): string {
    return `${options.cdn_root ?? CDN_DOMAIN}/bin-${options.platform === 'win32' ? 'win' : options.platform}${options.preview ?? '-preview'}/bedrock-server-${options.version}.zip`;
 }
+
 export async function getLatestBuildVersionFromOSS(options: VersionOptions): Promise<string | null> {
    let platform = options.platform === 'win32' ? 'windows' : options.platform;
    let response = await fetch(OSS_GIT_VERSIONS_FILE).catch(_ => null);
@@ -57,6 +68,18 @@ export async function getLatestBuildVersionFromOSS(options: VersionOptions): Pro
    const version = version_set[options.preview ? 'preview' : 'stable'];
    return version ?? null;
 }
+
+export async function getLatestBuildVersionFromService(options: VersionOptions): Promise<string | null> {
+   const link = await getLatestDownloadLinkFromServices(options);
+   if (!link) return null;
+
+   const pth = new URL(link).pathname;
+
+   const index = pth.lastIndexOf('/');
+   const data = pth.substring(index + 1).substring(15);
+   return data.substring(0, data.length - 4);
+}
+
 export async function getSpecificDownloadLinkOSS(options: SpecificVersionOptions): Promise<string | null> {
    const platform = options.platform === 'win32' ? 'windows' : options.platform;
    const response = await fetch(

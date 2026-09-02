@@ -2,6 +2,7 @@ import { expect, suite, test } from 'vitest';
 
 import {
    getLatestBuildVersionFromOSS,
+   getLatestBuildVersionFromService,
    getLatestDownloadLinkFromOSSGit,
    getLatestDownloadLinkFromServices,
    getSpecificDownloadLinkManual,
@@ -137,6 +138,19 @@ suite('Get Latest Version', () => {
    ] satisfies VersionOptions[])
       test('Latest Version', async () => {
          expect(await getLatestBuildVersionFromOSS(t)).not.toBeNull();
+      });
+});
+
+suite('Get Latest Version Services', () => {
+   for (const t of [
+      { platform: 'win32', preview: true },
+      { platform: 'win32', preview: false },
+      { platform: 'linux', preview: true },
+      { platform: 'linux', preview: false },
+   ] satisfies VersionOptions[])
+      test('Latest Version ' + JSON.stringify(t), async () => {
+         expect(await getLatestBuildVersionFromService(t)).not.toBeNull();
+         console.log(await getLatestBuildVersionFromService(t));
       });
 });
 
