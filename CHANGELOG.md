@@ -1,3 +1,7 @@
+# 1.3.1-beta
+
+- Missing built files for `1.3.0-beta`
+
 # 1.3.0-beta
 
 - Added `getLatestDownloadLinkFromServices` alternative to already available `getLatestBuildVersionFromOSS`
