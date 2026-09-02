@@ -49,12 +49,13 @@ export async function getLatestDownloadLinkFromOSSGit(options: VersionOptions): 
    if (!data) return null;
    return data.download_url ?? null;
 }
+
 /**
  * Hardcoded values are used, please avoid this function if possible
  * @deprecated
  */
 export function getSpecificDownloadLinkManual(options: SpecificVersionOptions): string {
-   return `${options.cdn_root ?? CDN_DOMAIN}/bin-${options.platform === 'win32' ? 'win' : options.platform}${options.preview ?? '-preview'}/bedrock-server-${options.version}.zip`;
+   return `${options.cdn_root ?? CDN_DOMAIN}/bin-${options.platform === 'win32' ? 'win' : options.platform}${options.preview ? '-preview' : ''}/bedrock-server-${options.version}.zip`;
 }
 
 export async function getLatestBuildVersionFromOSS(options: VersionOptions): Promise<string | null> {

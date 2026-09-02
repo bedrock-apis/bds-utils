@@ -136,7 +136,7 @@ suite('Get Latest Version', () => {
       { platform: 'linux', preview: true },
       { platform: 'linux', preview: false },
    ] satisfies VersionOptions[])
-      test('Latest Version', async () => {
+      test('Latest Version ' + JSON.stringify(t), async () => {
          expect(await getLatestBuildVersionFromOSS(t)).not.toBeNull();
       });
 });
@@ -150,7 +150,21 @@ suite('Get Latest Version Services', () => {
    ] satisfies VersionOptions[])
       test('Latest Version ' + JSON.stringify(t), async () => {
          expect(await getLatestBuildVersionFromService(t)).not.toBeNull();
-         console.log(await getLatestBuildVersionFromService(t));
+      });
+});
+
+suite('Manual', () => {
+   for (const t of [
+      { platform: 'win32', preview: true },
+      { platform: 'win32', preview: false },
+      { platform: 'linux', preview: true },
+      { platform: 'linux', preview: false },
+   ] satisfies VersionOptions[])
+      test('Latest Version ' + JSON.stringify(t), async () => {
+         const build = await getLatestBuildVersionFromOSS(t);
+         expect(build).not.toBeNull();
+         const link = await getSpecificDownloadLinkOSS({ ...t, version: build! });
+         expect(getSpecificDownloadLinkManual({ ...t, version: build! })).toBe(link);
       });
 });
 

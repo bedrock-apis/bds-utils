@@ -1,3 +1,8 @@
+# 1.3.2-beta
+
+- Fixed `getSpecificDownloadLinkManual` returning invalid links for preview values
+-
+
 # 1.3.1-beta
 
 - Missing built files for `1.3.0-beta`
